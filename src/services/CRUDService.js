@@ -110,6 +110,7 @@ let deleteUserById = (userId) => {
             if (user) {
                 await user.destroy();
             }
+            
 
             resolve();
         } catch (e) {
