@@ -21,6 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         sequelize,
         modelName: 'Allcode',
+        tableName: 'allcode',
+        freezeTableName: true,
     });
     return Allcode;
 };
