@@ -16,8 +16,10 @@ app.use(cors({
     credentials: true, // nếu bạn muốn gửi cookie hoặc token
 }));
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }))
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 ViewEngine(app);
 initWebRouter(app);
