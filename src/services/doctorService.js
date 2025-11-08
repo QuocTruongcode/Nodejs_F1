@@ -1,6 +1,7 @@
 import { resolveInclude } from 'ejs';
 import db from '../models/index';
 import { raw } from 'body-parser';
+import { where } from 'sequelize';
 
 let getTopDoctorHome = (limitInput) => {
     return new Promise(async (resolve, reject) => {
@@ -30,6 +31,55 @@ let getTopDoctorHome = (limitInput) => {
     })
 }
 
+let getAllDoctors = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let doctors = await db.User.findAll({
+                where: { roleid: "R2" },
+                attributes: {
+                    exclude: ['password', 'image']
+                },
+            })
+
+            resolve({
+                errCode: 0,
+                data: doctors
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+let saveDetailInforDoctor = (inputData) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputData || !inputData.contentHTML || !inputData.contentMarkdown) {
+                resolve({
+                    errCode: 1,
+                    errMesage: "Missing parameter!"
+                })
+            } else {
+                await db.Markdown.create({
+                    contentHTML: inputData.contentHTML,
+                    contentMarkdown: inputData.contentMarkdown,
+                    description: inputData.description,
+                    doctorId: inputData.doctorId
+                })
+
+                resolve({
+                    errCode: 0,
+                    errMesage: "Save detail doctor successfuly!!!"
+                })
+            }
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 module.exports = {
-    getTopDoctorHome: getTopDoctorHome
+    getTopDoctorHome: getTopDoctorHome,
+    getAllDoctors: getAllDoctors,
+    saveDetailInforDoctor: saveDetailInforDoctor
 }
