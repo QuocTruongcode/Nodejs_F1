@@ -1,7 +1,8 @@
-import { resolveInclude } from 'ejs';
 import db from '../models/index';
-import { raw } from 'body-parser';
-import { where } from 'sequelize';
+require('dotenv').config();
+import _ from 'lodash';
+
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 
 let getTopDoctorHome = (limitInput) => {
     return new Promise(async (resolve, reject) => {
@@ -140,9 +141,61 @@ let getDetailDoctorById = (inputId) => {
     })
 }
 
+let bulkCreateSchedule = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.arrSchedule && !data.doctorId && !data.formatedDate) {
+                resolve({
+                    errCode: 1,
+                    errMesage: 'Missing required param!'
+                })
+            } else {
+                let schedule = data.arrSchedule;
+                // console.log("check create schedule in server: ", schedule)
+                if (schedule && schedule.length > 0) {
+                    schedule = schedule.map(item => {
+                        item.maxNumber = MAX_NUMBER_SCHEDULE;
+                        return item;
+                    })
+                }
+                // console.log("check schedule: ", schedule)
+                let existing = await db.Schedule.findAll(
+                    {
+                        where: { doctorId: data.doctorId, date: data.formatedDate },
+                        attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
+                        raw: true
+                    }
+                );
+                if (existing && existing.length > 0) {
+                    existing = existing.map(item => {
+                        item.date = new Date(item.date).getTime();
+                        return item;
+                    })
+                }
+
+                let toCreate = _.differenceWith(schedule, existing, (a, b) => {
+                    return a.timeType === b.timeType && a.date === b.date;
+                });
+                // console.log("check diffirent: ", toCreate)
+
+                if (toCreate && toCreate.length > 0) {
+                    await db.Schedule.bulkCreate(schedule);
+                }
+
+                resolve({
+                    errCode: 0,
+                    errMesage: "0k"
+                })
+            }
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctors: getAllDoctors,
     saveDetailInforDoctor: saveDetailInforDoctor,
-    getDetailDoctorById: getDetailDoctorById
+    getDetailDoctorById: getDetailDoctorById,
+    bulkCreateSchedule: bulkCreateSchedule,
 }
