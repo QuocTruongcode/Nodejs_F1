@@ -1,6 +1,7 @@
 import { where } from 'sequelize';
 import db from '../models/index';
 require('dotenv').config();
+import emailService from './emailService';
 
 let postBookAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
@@ -11,6 +12,15 @@ let postBookAppointment = (data) => {
                     errMessage: "Missing body"
                 })
             } else {
+
+                await emailService.senđimpleEmail({
+                    reciverEmail: data.email,
+                    patientName: "Nguyen Quoc Truong",
+                    doctorName: "Nguyen Thi Thu Tra",
+                    timeType: data.timeType,
+                    redirectLink: "https://www.youtube.com/watch?v=asoNhXovTtk&list=RDasoNhXovTtk&start_radio=1",
+                })
+
                 let user = await db.User.findOrCreate({
                     where: { email: data.email },
                     default: {
