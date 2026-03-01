@@ -28,6 +28,10 @@ module.exports = {
                 type: Sequelize.STRING
             },
 
+            token: {
+                type: Sequelize.STRING
+            },
+
 
 
             createdAt: {

@@ -6,7 +6,7 @@ import emailService from './emailService';
 let postBookAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.email || !data.doctorId || !data.timeType || !data.date) {
+            if (!data.email || !data.doctorId || !data.timeType || !data.date || !data.fullName) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing body"
@@ -15,10 +15,13 @@ let postBookAppointment = (data) => {
 
                 await emailService.senđimpleEmail({
                     reciverEmail: data.email,
-                    patientName: "Nguyen Quoc Truong",
-                    doctorName: "Nguyen Thi Thu Tra",
+                    patientName: data.fullName,
+                    doctorName: data.nameDoctor,
                     timeType: data.timeType,
+                    language: data.language,
                     redirectLink: "https://www.youtube.com/watch?v=asoNhXovTtk&list=RDasoNhXovTtk&start_radio=1",
+
+                    stringDataTime: data.stringDataTime,
                 })
 
                 let user = await db.User.findOrCreate({
