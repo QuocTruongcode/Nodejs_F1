@@ -2,7 +2,7 @@ import { where } from 'sequelize';
 import db from '../models/index';
 require('dotenv').config();
 import emailService from './emailService';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { defaults } from 'lodash';
 
 let buildUrlEmail = (token, doctorId) => {
@@ -26,7 +26,7 @@ let postBookAppointment = (data) => {
                     doctorName: data.nameDoctor,
                     timeType: data.timeType,
                     language: data.language,
-                    redirectLink: buildUrlEmail(token,data.doctorId),
+                    redirectLink: buildUrlEmail(token, data.doctorId),
 
                     stringDataTime: data.stringDataTime,
                 })
@@ -64,9 +64,9 @@ let postBookAppointment = (data) => {
 }
 
 let postVerifyBookAppointment = (data) => {
-        return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
-            if ( !data.doctorId && !data.token) {
+            if (!data.doctorId && !data.token) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing body"
@@ -94,7 +94,7 @@ let postVerifyBookAppointment = (data) => {
                         errMessage: "Do not find information schedule!",
                     })
                 }
-                 
+
             }
         } catch (e) {
             reject(e);
