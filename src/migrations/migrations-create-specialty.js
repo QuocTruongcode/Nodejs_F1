@@ -17,12 +17,24 @@ module.exports = {
                 type: Sequelize.TEXT
             },
             image: {
-                type: Sequelize.STRING
+                type: Sequelize.TEXT('long')
             },
 
             name: {
                 type: Sequelize.STRING
             },
+
+
+            contentHTML: {
+                allowNull: false,
+                type: Sequelize.TEXT('long'),
+            },
+
+            contentMarkdown: {
+                allowNull: false,
+                type: Sequelize.TEXT('long'),
+            },
+
 
             createdAt: {
                 allowNull: false,

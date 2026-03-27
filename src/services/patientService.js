@@ -12,7 +12,7 @@ let buildUrlEmail = (token, doctorId) => {
 let postBookAppointment = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.email || !data.doctorId || !data.timeType || !data.date || !data.fullName) {
+            if (!data.email || !data.doctorId || !data.timeType || !data.dateSchedule || !data.fullName) {
                 resolve({
                     errCode: 1,
                     errMessage: "Missing body"
@@ -39,14 +39,20 @@ let postBookAppointment = (data) => {
                     }
                 });
                 console.log("check data user booking: ", user[0])
+                console.log("check data  booking: ", data)
+
                 if (user && user[0]) {
                     await db.Booking.findOrCreate({
-                        where: { patientId: user[0].id },
+                        where: {
+                            timeType: data.timeType,
+                            date: data.dateSchedule
+
+                        },
                         defaults: {
                             statusId: 'S1',
                             doctorId: data.doctorId,
                             patientId: user[0].id,
-                            date: data.date,
+                            date: data.dateSchedule,
                             timeType: data.timeType,
                             token: token,
                         }
@@ -102,7 +108,41 @@ let postVerifyBookAppointment = (data) => {
     })
 }
 
+let getCheckingBookAppointment = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.date && !data.timeType) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Missing parameter"
+                })
+            } else {
+                let booking = await db.Booking.findOne({
+                    where: {
+                        date: data.date,
+                        timeType: data.timeType
+                    }
+                })
+                if (booking) {
+                    resolve({
+                        errCode: 0,
+                        errMessage: "Have a booking apoinment",
+                    })
+                } else {
+                    resolve({
+                        errCode: 2,
+                        errMessage: "No booking apoinment",
+                    })
+                }
+            }
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 module.exports = {
     postBookAppointment: postBookAppointment,
-    postVerifyBookAppointment: postVerifyBookAppointment
+    postVerifyBookAppointment: postVerifyBookAppointment,
+    getCheckingBookAppointment: getCheckingBookAppointment
 }
