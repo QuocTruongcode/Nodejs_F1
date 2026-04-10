@@ -58,6 +58,10 @@ module.exports = {
                 allowNull: false,
                 defaultValue: 0
             },
+            specialtyId: {
+                type: Sequelize.INTEGER,
+                allowNull: false,
+            },
 
             createdAt: {
                 allowNull: false,

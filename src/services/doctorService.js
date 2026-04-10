@@ -67,6 +67,7 @@ let saveDetailInforDoctor = (inputData) => {
                 || !inputData.nameClinic
                 || !inputData.addressClinic
                 || !inputData.note
+                || !inputData.specialtyId
 
             ) {
                 resolve({
@@ -113,6 +114,8 @@ let saveDetailInforDoctor = (inputData) => {
                     doctorInfor.nameClinic = inputData.nameClinic;
                     doctorInfor.addressClinic = inputData.addressClinic;
                     doctorInfor.note = inputData.note;
+                    doctorInfor.specialtyId = inputData.specialtyId;
+
                     await doctorInfor.save()
 
                 } else {
@@ -124,7 +127,9 @@ let saveDetailInforDoctor = (inputData) => {
                         provinceId: inputData.selectedProvince,
                         nameClinic: inputData.nameClinic,
                         addressClinic: inputData.addressClinic,
-                        note: inputData.note
+                        note: inputData.note,
+                        specialtyId: inputData.specialtyId
+
                     })
                 }
 
@@ -380,6 +385,37 @@ let getProfileDoctorById = (inputId) => {
     })
 }
 
+let getAllDoctorsIdBySpecialtiesId = (inputId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!inputId) {
+                resolve({
+                    errCode: 1,
+                    errMesage: "Missing required parameted!"
+                })
+            } else {
+                let data = await db.Doctor_Infor.findAll({
+                    where: {
+                        specialtyId: inputId,
+                    },
+                    attributes: ['doctorId'],
+
+                })
+                if (data) {
+                    resolve({
+                        errCode: 0,
+                        errMesage: "Get data success!",
+                        data: data
+                    })
+                }
+
+            }
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 module.exports = {
     getTopDoctorHome: getTopDoctorHome,
     getAllDoctors: getAllDoctors,
@@ -389,4 +425,5 @@ module.exports = {
     getScheduleByDate: getScheduleByDate,
     getExtraInforDoctorById: getExtraInforDoctorById,
     getProfileDoctorById: getProfileDoctorById,
+    getAllDoctorsIdBySpecialtiesId: getAllDoctorsIdBySpecialtiesId,
 }

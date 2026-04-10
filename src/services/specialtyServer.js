@@ -37,7 +37,7 @@ let getDetailSpecialties = async () => {
     return new Promise(async (resolve, reject) => {
         try {
             let data = await db.Specialty.findAll({
-                attributes: ['id', 'name']
+                //      attributes: ['id', 'name']
             });
 
             resolve({
